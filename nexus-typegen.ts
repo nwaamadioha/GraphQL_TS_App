@@ -48,6 +48,10 @@ export interface NexusGenObjects {
     id: number; // Int!
     name: string; // String!
   }
+  Vote: { // root type
+    link: NexusGenRootTypes['Link']; // Link!
+    user: NexusGenRootTypes['User']; // User!
+  }
 }
 
 export interface NexusGenInterfaces {
@@ -70,6 +74,7 @@ export interface NexusGenFieldTypes {
     id: number; // Int!
     postedBy: NexusGenRootTypes['User'] | null; // User
     url: string; // String!
+    voters: NexusGenRootTypes['User'][]; // [User!]!
   }
   Message: { // field return type
     message: string; // String!
@@ -81,6 +86,7 @@ export interface NexusGenFieldTypes {
     post: NexusGenRootTypes['Link']; // Link!
     signup: NexusGenRootTypes['AuthPayload']; // AuthPayload!
     updateLink: NexusGenRootTypes['Message']; // Message!
+    vote: NexusGenRootTypes['Vote'] | null; // Vote
   }
   Query: { // field return type
     feeds: Array<NexusGenRootTypes['Link'] | null>; // [Link]!
@@ -91,6 +97,11 @@ export interface NexusGenFieldTypes {
     id: number; // Int!
     links: NexusGenRootTypes['Link'][]; // [Link!]!
     name: string; // String!
+    votes: NexusGenRootTypes['Link'][]; // [Link!]!
+  }
+  Vote: { // field return type
+    link: NexusGenRootTypes['Link']; // Link!
+    user: NexusGenRootTypes['User']; // User!
   }
 }
 
@@ -104,6 +115,7 @@ export interface NexusGenFieldTypeNames {
     id: 'Int'
     postedBy: 'User'
     url: 'String'
+    voters: 'User'
   }
   Message: { // field return type name
     message: 'String'
@@ -115,6 +127,7 @@ export interface NexusGenFieldTypeNames {
     post: 'Link'
     signup: 'AuthPayload'
     updateLink: 'Message'
+    vote: 'Vote'
   }
   Query: { // field return type name
     feeds: 'Link'
@@ -125,6 +138,11 @@ export interface NexusGenFieldTypeNames {
     id: 'Int'
     links: 'Link'
     name: 'String'
+    votes: 'Link'
+  }
+  Vote: { // field return type name
+    link: 'Link'
+    user: 'User'
   }
 }
 
@@ -150,6 +168,9 @@ export interface NexusGenArgTypes {
       description: string; // String!
       id: number; // Int!
       url: string; // String!
+    }
+    vote: { // args
+      linkId: number; // Int!
     }
   }
   Query: {

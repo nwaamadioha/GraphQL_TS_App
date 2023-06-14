@@ -1,5 +1,4 @@
 import { extendType, objectType, nonNull, stringArg, intArg } from "nexus";
-import { NexusGenObjects } from "../../nexus-typegen"
 
 // Define an object type called Link that represents the links that can be posted to Hacker News
 export const Link = objectType({
@@ -16,6 +15,14 @@ export const Link = objectType({
                     .postedBy();
             },
         });
+        t.nonNull.list.nonNull.field("voters", {
+            type: "User",
+            resolve(parent, args, context) {
+                return context.prisma.link
+                    .findUnique({ where: { id: parent.id } })
+                    .voters();
+            }
+        })
     },
 });
 
