@@ -5,8 +5,23 @@
 
 
 import type { Context } from "./src/context"
-
-
+import type { core } from "nexus"
+declare global {
+  interface NexusGenCustomInputMethods<TypeName extends string> {
+    /**
+     * A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+     */
+    dateTime<FieldName extends string>(fieldName: FieldName, opts?: core.CommonInputFieldConfig<TypeName, FieldName>): void // "DateTime";
+  }
+}
+declare global {
+  interface NexusGenCustomOutputMethods<TypeName extends string> {
+    /**
+     * A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+     */
+    dateTime<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "DateTime";
+  }
+}
 
 
 declare global {
@@ -14,9 +29,15 @@ declare global {
 }
 
 export interface NexusGenInputs {
+  LinkOrderInput: { // input type
+    createdAt?: NexusGenEnums['Sort'] | null; // Sort
+    description?: NexusGenEnums['Sort'] | null; // Sort
+    url?: NexusGenEnums['Sort'] | null; // Sort
+  }
 }
 
 export interface NexusGenEnums {
+  Sort: "asc" | "desc"
 }
 
 export interface NexusGenScalars {
@@ -25,6 +46,7 @@ export interface NexusGenScalars {
   Float: number
   Boolean: boolean
   ID: string
+  DateTime: any
 }
 
 export interface NexusGenObjects {
@@ -33,6 +55,7 @@ export interface NexusGenObjects {
     user: NexusGenRootTypes['User']; // User!
   }
   Link: { // root type
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
     description: string; // String!
     id: number; // Int!
     url: string; // String!
@@ -62,7 +85,7 @@ export interface NexusGenUnions {
 
 export type NexusGenRootTypes = NexusGenObjects
 
-export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
+export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars & NexusGenEnums
 
 export interface NexusGenFieldTypes {
   AuthPayload: { // field return type
@@ -70,6 +93,7 @@ export interface NexusGenFieldTypes {
     user: NexusGenRootTypes['User']; // User!
   }
   Link: { // field return type
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
     description: string; // String!
     id: number; // Int!
     postedBy: NexusGenRootTypes['User'] | null; // User
@@ -89,7 +113,7 @@ export interface NexusGenFieldTypes {
     vote: NexusGenRootTypes['Vote'] | null; // Vote
   }
   Query: { // field return type
-    feeds: Array<NexusGenRootTypes['Link'] | null>; // [Link]!
+    feed: Array<NexusGenRootTypes['Link'] | null>; // [Link]!
     link: NexusGenRootTypes['Link'] | null; // Link
   }
   User: { // field return type
@@ -111,6 +135,7 @@ export interface NexusGenFieldTypeNames {
     user: 'User'
   }
   Link: { // field return type name
+    createdAt: 'DateTime'
     description: 'String'
     id: 'Int'
     postedBy: 'User'
@@ -130,7 +155,7 @@ export interface NexusGenFieldTypeNames {
     vote: 'Vote'
   }
   Query: { // field return type name
-    feeds: 'Link'
+    feed: 'Link'
     link: 'Link'
   }
   User: { // field return type name
@@ -174,6 +199,12 @@ export interface NexusGenArgTypes {
     }
   }
   Query: {
+    feed: { // args
+      filter?: string | null; // String
+      orderBy?: NexusGenInputs['LinkOrderInput'][] | null; // [LinkOrderInput!]
+      skip?: number | null; // Int
+      take?: number | null; // Int
+    }
     link: { // args
       id: number; // Int!
     }
@@ -188,9 +219,9 @@ export interface NexusGenTypeInterfaces {
 
 export type NexusGenObjectNames = keyof NexusGenObjects;
 
-export type NexusGenInputNames = never;
+export type NexusGenInputNames = keyof NexusGenInputs;
 
-export type NexusGenEnumNames = never;
+export type NexusGenEnumNames = keyof NexusGenEnums;
 
 export type NexusGenInterfaceNames = never;
 

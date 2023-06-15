@@ -1,4 +1,5 @@
-import { extendType, objectType, nonNull, stringArg, intArg } from "nexus";
+import { extendType, objectType, nonNull, stringArg, intArg, inputObjectType, enumType, arg, list } from "nexus";
+import { Prisma } from "@prisma/client";
 
 // Define an object type called Link that represents the links that can be posted to Hacker News
 export const Link = objectType({
@@ -7,6 +8,7 @@ export const Link = objectType({
         t.nonNull.int("id");
         t.nonNull.string("description");
         t.nonNull.string("url");
+        t.nonNull.dateTime("createdAt");
         t.field("postedBy", {
             type: "User",
             resolve(parent, args, context) {
@@ -39,13 +41,31 @@ export const Message = objectType({
 export const LinkQuery = extendType({
     type: "Query",
     definition(t) {
-        t.nonNull.list.field("feeds", {
+        t.nonNull.list.field("feed", { //list of links
             type: "Link",
+            args: {
+                filter: stringArg(),
+                skip: intArg(),
+                take: intArg(),
+                orderBy: arg({ type: list(nonNull(LinkOrderByInput))}),
+            },
             resolve(parent, args, context, info) {
-                return context.prisma.link.findMany();
+                const where = args.filter
+                    ? {
+                        OR: [
+                            { description: { contains: args.filter } },
+                            { url: { contains: args.filter } },
+                        ]
+                    } : {};
+                return context.prisma.link.findMany({
+                    where,
+                    skip: args?.skip as number | undefined,
+                    take: args?.take as number | undefined,
+                    orderBy: args?.orderBy as Prisma.Enumerable<Prisma.LinkOrderByWithRelationInput> | undefined,
+                });
             },
         });
-        t.field("link", {
+        t.field("link", { //a single link
             type: "Link",
             args: {
                 id: nonNull(intArg()),
@@ -118,3 +138,18 @@ export const LinkMutation = extendType({
         });
     },
 });
+
+//Add a field LinkOrderInput for sorting links
+export const LinkOrderByInput = inputObjectType({
+    name: "LinkOrderInput",
+    definition(t) {
+        t.field("description", {type: Sort});
+        t.field("url", {type: Sort});
+        t.field("createdAt", {type: Sort});
+    },
+});
+
+export const Sort = enumType({
+    name: "Sort",
+    members: ["asc", "desc"],
+})
